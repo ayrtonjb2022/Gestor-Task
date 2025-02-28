@@ -35,7 +35,8 @@ function RegisterPage() {
         mostrarMensaje("advertencia", "Las contraseñas no coinciden");
         return;
       }
-      const response = await axios.post("http://localhost:3000/api/auth/register", formData,
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await axios.post(`${API_URL}/auth/register`, formData,
         {
           headers: {
             "Content-Type": "application/json",

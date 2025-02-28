@@ -36,7 +36,7 @@ function MisTareas() {
       try {
         const response = await getDataTask();
         
-        if (response?.status == 200) {
+        if (response?.status == 201 || response?.status == 200) {
           setTasks(response.data);
         }else{
           setTasks([])

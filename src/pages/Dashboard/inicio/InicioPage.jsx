@@ -30,7 +30,8 @@ function InicioPage() {
 
     const fetchGruposAsociados = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/team/allTeam/`, {
+        const API_URL = import.meta.env.VITE_API_URL;
+        const response = await axios.get(`${API_URL}/team/allTeam/`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
@@ -53,7 +54,8 @@ function InicioPage() {
 
     const fetchTask = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/tasks/`,{
+        const API_URL = import.meta.env.VITE_API_URL;
+        const response = await axios.get(`${API_URL}/tasks/`,{
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
