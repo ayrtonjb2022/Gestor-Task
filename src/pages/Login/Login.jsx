@@ -41,14 +41,11 @@ function LoginPage() {
 
         // Guardar el token y el ID en sessionStorage
         sessionStorage.setItem("token", token);
-        
-        
-        
         mostrarMensaje("exito", "Inicio de sesión exitoso");
 
         // Redirigir al dashboard
+        navigate("/dashboard");
       }
-      navigate("/dashboard");
       (response);
       
     } catch (error) {
