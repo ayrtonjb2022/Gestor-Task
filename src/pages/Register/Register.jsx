@@ -9,7 +9,7 @@ function RegisterPage() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
 
   const handleChange = (e) => {

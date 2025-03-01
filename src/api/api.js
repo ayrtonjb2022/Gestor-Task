@@ -72,7 +72,6 @@ export const getDataTask = async () => {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     });    
-
     return response;
   } catch (error) {
     return error.response;
