@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/Home/Home';
-import ContactPage from '../pages/Contacto/Contacto';
 import LoginPage from '../pages/Login/Login';
 import RegisterPage from '../pages/Register/Register';
 import DashboardPage from '../pages/Dashboard/Dashboard';
@@ -32,7 +31,6 @@ const AppRouter = () => {
       <Routes>
         {/* Rutas Públicas */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/contacto" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
         <Route path='*' element={<PageError/>} />
