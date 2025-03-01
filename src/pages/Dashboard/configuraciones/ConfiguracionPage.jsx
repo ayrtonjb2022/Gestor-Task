@@ -43,14 +43,27 @@ function SettingsPage() {
   });
   const [mensajeUpDato, setMensajeUpDato] = useState(false)
   const [mensajeUpDatoPass, setMensajeUpDatoPass] = useState(false)
-  const mostrarMensaje = (tipo, texto) => {
+  const mostrarMensaje = (tipo, texto, tipoMensaje) => {
     setMensaje({ tipo, mensaje: texto });
+  
+    if (tipoMensaje === "user") {
+      setMensajeUpDato(true);
+      setMensajeUpDatoPass(false);
+    } else if (tipoMensaje === "password") {
+      setMensajeUpDatoPass(true);
+      setMensajeUpDato(false);
+    }
+  
     setTimeout(() => {
-      mensajeUpDato && setMensajeUpDato(false)
-      mensajeUpDatoPass && setMensajeUpDatoPass(false)
-      setMensaje({ tipo: "", mensaje: "" })
+      if (tipoMensaje === "user") {
+        setMensajeUpDato(false);
+      } else if (tipoMensaje === "password") {
+        setMensajeUpDatoPass(false);
+      }
+      setMensaje({ tipo: "", mensaje: "" });
     }, 3000);
   };
+  
 
   const updateUserInfo = async () => {
     try {
@@ -61,15 +74,14 @@ function SettingsPage() {
           sessionStorage.removeItem("token");
           navigate("/");
         } else {
-          return mostrarMensaje("error", response.data.message);
+          return mostrarMensaje("error", response.data.message, "user");
         }
       }
-      mostrarMensaje("exito", response.data.message);
-
+      mostrarMensaje("exito", response.data.message, "user");
 
     } catch (error) {
       if (error.response.status == 500) {
-        return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde");
+        return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde", "user");
       }
 
     }
@@ -80,11 +92,11 @@ function SettingsPage() {
       setMensajeUpDatoPass(true)
 
       if (newPassword !== confirmPassword) {
-        mostrarMensaje("error", "Las contraseñas no coinciden");
+        mostrarMensaje("error", "Las contraseñas no coinciden","password");
         return;
       }
       if (!newPassword || !confirmPassword || !currentPassword) {
-        mostrarMensaje("error", "Todos los campos son obligatorios");
+        mostrarMensaje("error", "Todos los campos son obligatorios","password");
         return
       }
 
@@ -94,18 +106,17 @@ function SettingsPage() {
           sessionStorage.removeItem("token");
           navigate("/");
         } else {
-          mostrarMensaje("error", response.data.message);
+          mostrarMensaje("error", response.data.message, "password");
         }
       }
-      setMensajeUpDatoPass(true)
-      mostrarMensaje("exito", response.data.message);
+      mostrarMensaje("exito", response.data.message,"password");
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
 
     } catch (error) {
-      return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde");
+      return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde","password");
     }
   };
 
