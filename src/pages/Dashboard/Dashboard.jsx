@@ -9,12 +9,12 @@ import EquipoDataPage from "../Dashboard/equipo/EquipoData";
 
 const DashboardPage = () => {
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col sm:flex-row h-screen">
       {/* Sidebar Fijo */}
       <Sidebar />
 
       {/* Contenido Principal */}
-      <div className="ml-64 w-full p-4">
+      <div className="sm:ml-64 ml-0 w-full p-4 sm:p-6">
         <Routes>
           <Route path="/" element={<InicioPage />} /> {/* /dashboard */}
           <Route path="/tasks" element={<MisTareas />} /> {/* /dashboard/tasks */}

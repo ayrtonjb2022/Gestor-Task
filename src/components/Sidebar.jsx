@@ -26,7 +26,7 @@ function Sidebar() {
       <aside 
         className={`w-64 h-screen bg-gray-800 text-white flex flex-col fixed top-0 left-0 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 transition-transform duration-300 ease-in-out md:flex`}
+        } md:translate-x-0 transition-transform duration-300 ease-in-out md:flex z-50`} // Añadí z-50 para asegurar que el sidebar esté por encima del overlay
       >
         <h2 className="text-2xl font-semibold text-center py-6 border-b border-gray-700">
           GestorTareas
