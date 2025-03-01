@@ -77,6 +77,8 @@ function SettingsPage() {
 
   const changePassword = async () => {
     try {
+      setMensajeUpDatoPass(true)
+
       if (newPassword !== confirmPassword) {
         mostrarMensaje("error", "Las contraseñas no coinciden");
         return;
