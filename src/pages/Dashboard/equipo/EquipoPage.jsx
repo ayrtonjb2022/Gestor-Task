@@ -212,7 +212,7 @@ function TeamPage() {
     setShowMembersModal(false)
     setShowConfigUsModal(true);
   };
-  const handleEditRole = async (e) => {
+const handleEditRole = async (e) => {
     e.preventDefault();
     setLoading(true);
 

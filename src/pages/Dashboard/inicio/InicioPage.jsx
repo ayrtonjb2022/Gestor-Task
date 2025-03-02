@@ -25,10 +25,13 @@ function InicioPage() {
 
   // Datos de la base
   const [gruposAsociados, setGruposAsociados] = useState([]);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
-
+   
     const fetchGruposAsociados = async () => {
+      setLoading(true);
       try {
         const API_URL = import.meta.env.VITE_API_URL;
         const response = await axios.get(`${API_URL}/team/allTeam/`, {
@@ -36,7 +39,7 @@ function InicioPage() {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
-        
+
         if (response.status !== 200 && response.status !== 201) {
           if (response.data?.redirectToLogin || response.data.error == "jwt expired") {
             sessionStorage.removeItem("token");
@@ -49,19 +52,21 @@ function InicioPage() {
       } catch (error) {
         console.error("Error fetching grupos:");
         return navigate("/login");
+      } finally {
+        setLoading(false);
       }
     };
 
     const fetchTask = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL;
-        const response = await axios.get(`${API_URL}/tasks/`,{
+        const response = await axios.get(`${API_URL}/tasks/`, {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
         });
-        
-        
+
+
         const labels = [];
         const data = [0, 0, 0]; // Completadas, En Progreso, Pendientes
 
@@ -107,6 +112,11 @@ function InicioPage() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+        </div>
+      )}
       {/* Sección de Grupos */}
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Grupos Asociados</h2>

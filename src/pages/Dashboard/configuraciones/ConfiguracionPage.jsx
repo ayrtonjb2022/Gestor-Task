@@ -6,16 +6,19 @@ import { useNavigate } from "react-router-dom";
 
 function SettingsPage() {
   const navigate = useNavigate();
-  
+
   const [userInfo, setUserInfo] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
+      setLoading(true)
       try {
         const response = await getDatoUser();
         setUserInfo(response.data);
@@ -30,6 +33,8 @@ function SettingsPage() {
       } catch (error) {
         return navigate("/")
 
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -45,7 +50,7 @@ function SettingsPage() {
   const [mensajeUpDatoPass, setMensajeUpDatoPass] = useState(false)
   const mostrarMensaje = (tipo, texto, tipoMensaje) => {
     setMensaje({ tipo, mensaje: texto });
-  
+
     if (tipoMensaje === "user") {
       setMensajeUpDato(true);
       setMensajeUpDatoPass(false);
@@ -53,7 +58,7 @@ function SettingsPage() {
       setMensajeUpDatoPass(true);
       setMensajeUpDato(false);
     }
-  
+
     setTimeout(() => {
       if (tipoMensaje === "user") {
         setMensajeUpDato(false);
@@ -63,9 +68,10 @@ function SettingsPage() {
       setMensaje({ tipo: "", mensaje: "" });
     }, 3000);
   };
-  
+
 
   const updateUserInfo = async () => {
+    setLoading(true)
     try {
       const response = await upDataUser(userInfo)
       setMensajeUpDato(true)
@@ -84,19 +90,22 @@ function SettingsPage() {
         return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde", "user");
       }
 
+    } finally {
+      setLoading(false);
     }
   };
 
   const changePassword = async () => {
+    setLoading(true)
     try {
       setMensajeUpDatoPass(true)
 
       if (newPassword !== confirmPassword) {
-        mostrarMensaje("error", "Las contraseñas no coinciden","password");
+        mostrarMensaje("error", "Las contraseñas no coinciden", "password");
         return;
       }
       if (!newPassword || !confirmPassword || !currentPassword) {
-        mostrarMensaje("error", "Todos los campos son obligatorios","password");
+        mostrarMensaje("error", "Todos los campos son obligatorios", "password");
         return
       }
 
@@ -109,25 +118,31 @@ function SettingsPage() {
           mostrarMensaje("error", response.data.message, "password");
         }
       }
-      mostrarMensaje("exito", response.data.message,"password");
+      mostrarMensaje("exito", response.data.message, "password");
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
 
     } catch (error) {
-      return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde","password");
+      return mostrarMensaje("error", "Error al actualizar el usuario intentelo mas tarde", "password");
+    } finally {
+      setLoading(false);
     }
   };
 
 
 
-  if (!userInfo) return <p>Cargando...</p>;
+  if (!userInfo) {return <p>Cargando...</p>;}
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 
-
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+        </div>
+      )}
 
       <div className="bg-white p-6 mb-8 rounded-lg shadow-md">
         {mensajeUpDato && <Mensajes tipo={mensaje.tipo} mensaje={mensaje.mensaje} />}

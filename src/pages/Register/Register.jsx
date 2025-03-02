@@ -72,7 +72,6 @@ function RegisterPage() {
  
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col">
-      {mensaje.mensaje && <Mensajes tipo={mensaje.tipo} mensaje={mensaje.mensaje} />}
       {/* Encabezado */}
 
       <header className="bg-gray-900 text-white p-4">
@@ -169,6 +168,8 @@ function RegisterPage() {
               </a>
             </p>
           </div>
+          {mensaje.mensaje && <Mensajes tipo={mensaje.tipo} mensaje={mensaje.mensaje} />}
+
         </div>
       </div>
 

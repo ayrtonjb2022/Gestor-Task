@@ -14,7 +14,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token"); 
       window.location.href = "/login"; 
     }
-
+    
     // 🔴 Evita que Axios imprima errores en la consola automáticamente
     return Promise.reject({ ...error, silent: true });
   }
@@ -183,9 +183,11 @@ export const upDataTeamMembers = async (data) => {
     });
    
     
-    return response; // Si la respuesta es exitosa, se retorna normalmente.
+    return response
   } catch (error) {
+    
     if(error.response){
+      
       console.warn("Error al actualizar");
     }
     return error.response;

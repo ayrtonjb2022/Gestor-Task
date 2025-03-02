@@ -8,9 +8,11 @@ function NotificationsPage() {
   const [pendingInvitations, setPendingInvitations] = useState([]);
   const [assignedTasks, setAssignedTasks] = useState([]);
   const [pendingTasks, setPendingTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchNotifications = async () => {
+      setLoading(true)
       try {
         const response = await getDataNotifications();
 
@@ -28,16 +30,18 @@ function NotificationsPage() {
         setPendingTasks(pending);
 
         //manejo  de errores
-        if(response.status !== 200 && response.status !== 201) {
+        if (response.status !== 200 && response.status !== 201) {
           if (response.data?.redirectToLogin) {
             sessionStorage.removeItem("token");
             navigate("/");
-          }else{
+          } else {
             mostrarMensaje("error", response.data.message);
           }
         }
       } catch (error) {
         console.error("Error al obtener notificaciones:", error);
+      } finally {
+        setLoading(true);
       }
     };
 
@@ -55,6 +59,7 @@ function NotificationsPage() {
   };
 
   const acceptInvitation = async (data) => {
+    setLoading(true)
     try {
       const response = await acceptInvitationRequest({
         sender_id: data.inv.sender_id,
@@ -68,11 +73,11 @@ function NotificationsPage() {
       if (data.acept == false) {
         return mostrarMensaje("error", "Invitación rechazada");
       }
-      if(response.status !== 200 && response.status !== 201) {
+      if (response.status !== 200 && response.status !== 201) {
         if (response.data?.redirectToLogin) {
           sessionStorage.removeItem("token");
           navigate("/");
-        }else{
+        } else {
           mostrarMensaje("error", response.data.message);
         }
       }
@@ -80,6 +85,8 @@ function NotificationsPage() {
 
     } catch (error) {
       console.error("Error al aceptar la invitación:");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +96,11 @@ function NotificationsPage() {
       {/* Invitaciones para unirse a equipos */}
       {mensaje.mensaje && <Mensajes tipo={mensaje.tipo} mensaje={mensaje.mensaje} />}
 
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+        </div>
+      )}
       <div className="bg-white p-6 mb-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-4">Invitaciones Pendientes</h2>
         {pendingInvitations.length === 0 ? (
@@ -118,7 +130,7 @@ function NotificationsPage() {
         {assignedTasks.length === 0 ? (
           <p>No tienes tareas asignadas</p>
         ) : (
-          assignedTasks.map((task,index) => (
+          assignedTasks.map((task, index) => (
             <div key={index} className="bg-gray-50 p-4 rounded-md shadow-sm">
               <p className="text-lg font-medium">{task.message}</p>
               <p className="text-sm text-gray-600">Equipo: {task.name_teams}</p>
@@ -127,7 +139,7 @@ function NotificationsPage() {
           ))
         )}
       </div>
-      
+
     </div>
   );
 }

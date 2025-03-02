@@ -5,8 +5,8 @@ import Modal from "../../../components/Modal";
 
 import { useNavigate } from "react-router-dom";
 function MisTareas() {
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     title: "",
@@ -18,6 +18,8 @@ function MisTareas() {
   const [teamAssociatedY, setTeamAssociated] = useState([]);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [taskATomar, setTasksATomar] = useState({})
+  const [loading, setLoading] = useState(false);
+
   //mensaje
   //mensaje
   const [mensaje, setMensaje] = useState({
@@ -31,46 +33,48 @@ function MisTareas() {
 
   const [newCall, setNewCall] = useState(false);
   useEffect(() => {
+    setLoading(true);
     const fetchTasks = async () => {
 
       try {
         const response = await getDataTask();
-        
+
         if (response?.status == 201 || response?.status == 200) {
           setTasks(response.data);
-        }else{
+        } else {
           setTasks([])
         }
 
-        if(response.status !== 200 && response.status !== 201) {
+        if (response.status !== 200 && response.status !== 201) {
           if (response.data?.redirectToLogin) {
             sessionStorage.removeItem("token");
             navigate("/");
-          }else if(response.status !== 401){
+          } else if (response.status !== 401) {
             mostrarMensaje("error", response.data.message);
           }
         }
       } catch (error) {
         console.error("Error al obtener las tareas:");
+      } finally {
+        setLoading(false);
       }
     };
 
     const teamAssociated = async () => {
-      
 
       try {
         const response = await getAssociatedGroups();
-        
+
         if (response?.data && response.status == 200) {
           setTeamAssociated(response.data.result);
         } else {
           setTeamAssociated([])
         }
-        if(response.status !== 200 && response.status !== 201) {
-          if(response.data?.redirectToLogin || response.status == 401) {
+        if (response.status !== 200 && response.status !== 201) {
+          if (response.data?.redirectToLogin || response.status == 401) {
             sessionStorage.removeItem("token");
             navigate("/");
-          }else{
+          } else {
             mostrarMensaje("error", response.data.message);
           }
         }
@@ -85,11 +89,10 @@ function MisTareas() {
 
   const addTask = async (e) => {
     e.preventDefault();
-
     const taskToSend = {
       ...newTask,
     };
-
+    setLoading(true);
     try {
       if (!taskToSend.title || !taskToSend.description || !taskToSend.team_id) {
         return mostrarMensaje("error", "Debes completar todos los campos para poder agregar una tarea");
@@ -101,11 +104,11 @@ function MisTareas() {
 
         setTasks((prevTasks) => [...prevTasks, newTaskWithId]);
 
-        if(response.status !== 200 && response.status !== 201) {
+        if (response.status !== 200 && response.status !== 201) {
           if (response.data?.redirectToLogin) {
             sessionStorage.removeItem("token");
             navigate("/");
-          }else{
+          } else {
             mostrarMensaje("error", response.data.message);
           }
         }
@@ -122,6 +125,8 @@ function MisTareas() {
 
     } catch (error) {
       console.error("Error al agregar la tarea:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -134,7 +139,6 @@ function MisTareas() {
   };
   const toggleTask = async (id_tasks, infoTask) => {
     try {
-
 
       if (infoTask.status == "pending") {
         setTasksATomar(infoTask)
@@ -163,12 +167,12 @@ function MisTareas() {
             task.id_tasks === id_tasks ? { ...task, status: newStatus } : task
           )
         );
-        
-        if(response.status !== 200 && response.status !== 201) {
+
+        if (response.status !== 200 && response.status !== 201) {
           if (response.data?.redirectToLogin) {
             sessionStorage.removeItem("token");
             navigate("/");
-          }else{
+          } else {
             mostrarMensaje("error", response.data.message);
           }
         }
@@ -191,6 +195,12 @@ function MisTareas() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
 
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+        </div>
+      )}
+
       <Modal isOpen={showTaskModal} onClose={() => setShowTaskModal(false)}>
         <div className="bg-white p-6 rounded-2xl shadow-xl w-96">
           <p className="text-2xl font-bold text-gray-800 mb-4 text-center">
@@ -199,7 +209,7 @@ function MisTareas() {
 
           <div className="flex flex-col gap-3 text-gray-700">
             {taskATomar.name != "" && (
-                <p><span className="font-semibold">Equipo:</span> {taskATomar.name}</p>
+              <p><span className="font-semibold">Equipo:</span> {taskATomar.name}</p>
             )}
             <p><span className="font-semibold">Título:</span> {taskATomar.title}</p>
             <p className="text-sm text-gray-600 bg-gray-100 p-3 rounded-lg 

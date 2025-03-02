@@ -10,28 +10,32 @@ const EquipoDataPage = () => {
   const [teamData, setTeamData] = useState(null);
   const [search, setSearch] = useState("");
   const [tasks, setTasks] = useState({}); // Estado separado para cada miembro
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
     const fetchEquipo = async () => {
+      setLoading(true)
       try {
         const response = await getTeamData(idEquipo);
         ("data", response);
         if (response?.data?.result) {
           setTeamData(response.data.result);
           setUserEmail(response.data.you);
-      } else {
+        } else {
           console.warn("No se encontraron datos en la respuesta del servidor.");
           setTeamData([]); // Evita errores asignando un array vacío si no hay datos
-      }
-      if(response.status !== 200 || response.status !== 201){
-        if (response.data?.redirectToLogin) { 
-          sessionStorage.removeItem("token");
-          navigate("/");
         }
-      } 
+        if (response.status !== 200 || response.status !== 201) {
+          if (response.data?.redirectToLogin) {
+            sessionStorage.removeItem("token");
+            navigate("/");
+          }
+        }
       } catch (error) {
         (error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -42,7 +46,7 @@ const EquipoDataPage = () => {
   (teamData);
 
   const filteredMembers = teamData.members.filter((member) => member.email_user !== user_email); //en el backend debo traer todos menos el mio para si poder ir sacando los id y evitar eata filtracion
-  const dataUser = teamData.members.filter((member) => member.email_user == user_email); 
+  const dataUser = teamData.members.filter((member) => member.email_user == user_email);
   (filteredMembers);
 
   const searchedMembers = filteredMembers.filter((member) =>
@@ -55,7 +59,7 @@ const EquipoDataPage = () => {
       alert("Por favor, completa todos los campos de la tarea.");
       return;
     }
-
+    setLoading(true);
     try {
       await postDataTask({
         title: task.title,
@@ -87,12 +91,19 @@ const EquipoDataPage = () => {
       }));
     } catch (error) {
       console.error("Error al asignar tarea:", error);
+    } finally {
+      setLoading(false);
     }
-   
+
   };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+        </div>
+      )}
       <h1 className="text-3xl font-bold mb-6">Miembros del equipo: {teamData.team_name || "Equipo no encontrado"}</h1>
       <input
         type="text"

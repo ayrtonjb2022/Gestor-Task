@@ -12,6 +12,7 @@ function LoginPage() {
   });
   const [loading, setLoading] = useState(false);
 
+
   const [mensaje, setMensaje] = useState({
     tipo: "exito",
     mensaje: "",
@@ -41,7 +42,7 @@ function LoginPage() {
 
       if (response.status === 200) {
         const { token, user } = response.data;
-        (user);
+     
 
 
         // Guardar el token y el ID en sessionStorage
@@ -49,11 +50,11 @@ function LoginPage() {
         mostrarMensaje("exito", "Inicio de sesión exitoso");
 
         // Redirigir al dashboard
-        if (token) {
-          navigate("/dashboard");
+        if (token || sessionStorage.getItem("token")) {
+          location.href = "/dashboard";
         }
       }
-      (response);
+      
 
     } catch (error) {
       if (error.response && error.response.data) {

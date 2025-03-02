@@ -17,9 +17,9 @@ const HomePage = () => {
 
   const handleRedirect = () => {
     if (isAuthenticated || sessionStorage.getItem("token")) {
-      navigate("/dashboard");  // ✅ Si está autenticado, ir al dashboard
+      location.href = "/dashboard";  // ✅ Si está autenticado, ir al dashboard
     } else {
-      navigate("/login");  // ❌ Si no, ir al login
+      location.href = "/login";  // ❌ Si no, ir al login
     }
   };
 
