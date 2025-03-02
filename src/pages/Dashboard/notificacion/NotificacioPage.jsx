@@ -41,7 +41,7 @@ function NotificationsPage() {
       } catch (error) {
         console.error("Error al obtener notificaciones:", error);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     };
 
